@@ -4,20 +4,95 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>リスト</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery.min.js"></script>
+  <script src="https://kit.fontawesome.com/79ffe8c132.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p&display=swap" rel="stylesheet">
 </head>
 
 
 <body>
-<div>
-  <div>
- <% @stations.each do |station| %>
-  <div class="station">
-  <span class="line"><%= station ["line"] %></span>
-  <span class="name"><%= station["name"] %></span>
+<div class="container-fluid">
 
+  <h2 class="text-center my-5"><%= @x %>,<%= @y%>の最寄駅  </h2>
+   <div class="row d-flex justify-content-center">
+ <% @stations.each do |station| %>
+  <div class="card col-lg-2 m-1 station" data-toggle="modal" data-target="#modal">
+  <div class="card-body">
+  <p class="line my-1"><%= station ["line"] %></p>
+  <i class="fas fa-subway my-1"></i>
+  <p class="name my-1"><%= station["name"] %></p>
+  </div>
   </div>
 	<% end %>
  </div>
 </div>
+
+<div class="modal fade" id="modal" tabindex="-1"
+ role="dialog" aria-labelledby="detail" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered"
+ role="document">
+ <div id="detail" class="modal-content">
+  <div class="modal-header text-center">
+  <h2>次の駅</h2>
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+  </button>
+ </div>
+
+ <div class="modal-body text-center next" ></div>
+
+</div>
+</div>
+</div>
+</div>
+<div>
+ <div>
+ <h2>前の駅</h2>
+ </div>
+
+ <% @stations.each do |station|%>
+ <div class="station">
+ <span class="prev">
+ <%= station["prev"] %>
+
+ </span>
+ <span class="name">
+  <%= station["name"] %>
+
+ </span>
+ </div>
+ <% end %>
+
+
+</div>
+<script>
+window.onload = function() {
+  $(".station").click(function(){
+    var line = $(".line",this).text();
+    var name = $(".name",this).text();
+   $.ajax("/api/station",{
+     type: "GET",
+     data:{"line":line,"name":name},
+     datatype: 'json'
+
+   })
+   .done(function(json){
+     $("#detail .next .prev ").text(json["next"]["prev"])
+   });
+
+
+
+
+
+  });
+
+
+}
+</script>
 </body>
 </html>
